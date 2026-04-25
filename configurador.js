@@ -21,7 +21,8 @@ localStorage.setItem("catalogo", JSON.stringify(meuCarrinho));
 // de JSON para array
 const catalogo = JSON.parse(localStorage.getItem("catalogo"));
 
-for (let i = 0; i <= meuCarrinho.length; i++){
-    resumoTEla.innerHTML
+for (let i = 0; i < meuCarrinho.length; i++){
+    resumoTela.innerHTML += 
+    `<p>Modelo: ${catalogo[i].modelo} - R$ ${catalogo[i].preco}</p>`
 }
 
