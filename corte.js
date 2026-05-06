@@ -16,3 +16,6 @@ function removerDoCarrinho(nomeDaPeca) {
     console.log(carrinhoDocliente);
 };
 removerDoCarrinho("A520");
+
+
+
