@@ -13,12 +13,12 @@ carregarClientes();
 */
 
 
-async function buscarDadosSeguros(){
+async function carregarClientes(){
     try {
         //colocamos o codigo perigoso dentro do try
         let resposta  = await fetch("https://site-falso.com/api");
         let dados = await resposta.json();
     } catch (erro){
-        console.erro("Alerta critico:  falha da comunicação.", erro);
+        console.error("Alerta critico:  falha da comunicação.", erro);
     }
 }
