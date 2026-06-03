@@ -32,7 +32,7 @@ let catalogoDePecas = [
   },
 ];
 
-let setupDoCliente = [];
+let setupDoCliente = JSON.parse(localStorage.getItem('carrinhoSalvo')) || [];
 
 function renderizarVitrine() {
   let vitrine = document.getElementById("vitrine-de-pecas");
@@ -43,11 +43,14 @@ function renderizarVitrine() {
 }
 
 function adicionarAoCarrinho(idDaPecaClicada) {
+  
   let pecaEncontrada = catalogoDePecas.find(
     (item) => item.id === idDaPecaClicada,
   );
   setupDoCliente.push(pecaEncontrada);
   console.log(setupDoCliente);
+
+  localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
   renderizarCarrinho();
 }
 function renderizarCarrinho() {
@@ -71,6 +74,8 @@ function renderizarCarrinho() {
 }
 function removerDoCarrinho(idDaPeca) {
   setupDoCliente = setupDoCliente.filter((peca) => peca.id !== idDaPeca);
+    localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
   renderizarCarrinho();
 }
 renderizarVitrine();
+renderizarCarrinho();
