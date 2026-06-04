@@ -57,7 +57,6 @@ function adicionarAoCarrinho(idDaPecaClicada) {
     setupDoCliente.push(copiaDaPeca);
   }
   console.log(setupDoCliente);
-
   localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
   renderizarCarrinho();
 }
@@ -81,9 +80,14 @@ function renderizarCarrinho() {
   carrinho.innerHTML += `<p class="vitrine-css"> Custo Total: ${totalFormatado} </p>`;
 }
 function removerDoCarrinho(idDaPeca) {
-  setupDoCliente = setupDoCliente.filter((peca) => peca.id !== idDaPeca);
+  let pecaAlvo = setupDoCliente.find((item) => item.id === idDaPeca);
+  if(pecaAlvo.quantidade > 1){
+    pecaAlvo.quantidade -= 1;
+  } else{
+     setupDoCliente = setupDoCliente.filter((peca) => peca.id !== idDaPeca);
+  }
     localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
-  renderizarCarrinho();
+  renderizarCarrinho(); 
 }
 renderizarVitrine();
 renderizarCarrinho();
