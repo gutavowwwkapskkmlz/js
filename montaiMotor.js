@@ -47,7 +47,15 @@ function adicionarAoCarrinho(idDaPecaClicada) {
   let pecaEncontrada = catalogoDePecas.find(
     (item) => item.id === idDaPecaClicada,
   );
-  setupDoCliente.push(pecaEncontrada);
+
+  let pecaNoCarrinho = setupDoCliente.find((item) => item.id === idDaPecaClicada)
+  if(pecaNoCarrinho) {
+    pecaNoCarrinho.quantidade += 1
+  } else{
+    let copiaDaPeca =  {...pecaEncontrada}
+    copiaDaPeca.quantidade = 1;
+    setupDoCliente.push(copiaDaPeca);
+  }
   console.log(setupDoCliente);
 
   localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
@@ -58,11 +66,11 @@ function renderizarCarrinho() {
   carrinho.innerHTML = "";
 
   setupDoCliente.forEach((peca) => {
-    carrinho.innerHTML += `<p class="vitrine-css">Nome: ${peca.nome}, Preço: ${peca.preco} <button onclick="removerDoCarrinho(${peca.id})">excluir</button> </p>`;
+    carrinho.innerHTML += `<p class="vitrine-css">Nome: ${peca.nome}, Preço: ${peca.preco}, quantidade: ${peca.quantidade}   <button onclick="removerDoCarrinho(${peca.id})">excluir</button> </p>`;
   });
 
   let total = setupDoCliente.reduce((acumulador, peca) => {
-    return acumulador + peca.preco;
+    return acumulador + (peca.preco * peca.quantidade);
   }, 0);
 
   let totalFormatado = new Intl.NumberFormat("pt-BR", {
