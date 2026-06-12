@@ -2,6 +2,9 @@ const express = require('express');
 
 
 const app = express();
+app.use(express.json());
+
+
 
 
 let catalogoDePecas = [
@@ -52,7 +55,12 @@ app.get('/catalogo', (requisicao, resposta) => {
     }
   });
   
-
+app.post('/catalogo', (requisicao, resposta) => {
+   let novaPeca = requisicao.body;
+   novaPeca.id = catalogoDePecas.length +1;
+   catalogoDePecas.push(novaPeca);
+   resposta.status(201).json(novaPeca);
+})
   app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000"); 
 });
