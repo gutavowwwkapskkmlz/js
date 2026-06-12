@@ -1,22 +1,51 @@
-// Importa o módulo nativo de HTTP do Node.js
-const http = require('http');
+const express = require('express');
 
-// Cria o servidor lógico
-const servidor = http.createServer((requisicao, resposta) => {
-    
-    // PASSO 1: O código de status HTTP 200 significa "OK". 
-    // Escreva a instrução para configurar o cabeçalho da resposta enviando o status 200 e informando que o conteúdo é um texto simples (Content-Type: text/plain).
-    // SEU CÓDIGO AQUI: resposta.writeHead( ... );
-    resposta.writeHead(200, {'Content-Type': 'text/plan'});
-    // PASSO 2: Encerre a requisição enviando a mensagem "Backend Operante. Acesso Autorizado."
-    // SEU CÓDIGO AQUI: resposta.end( ... );
-    resposta.end("Backend Operante. Acesso Autorizado.");
 
+const app = express();
+let catalogoDePecas = [
+  {
+    id: 1,
+    nome: "AMD Ryzen 5 5600G",
+    preco: 800,
+    categoria: "Processador ",
+  },
+  { id: 2, nome: "B550M ", preco: 750, categoria: "Placa-mãe" },
+  {
+    id: 3,
+    nome: "16 GB DDR4 (2x8 GB)",
+    preco: 800,
+    categoria: "Memória RAM",
+  },
+  {
+    id: 4,
+    nome: "500W 80 Plus Bronze ",
+    preco: 700,
+    categoria: "Fonte",
+  },
+  {
+    id: 5,
+    nome: "Mid Tower com boa ventilação ",
+    preco: 450,
+    categoria: "Fonte",
+  },
+  {
+    id: 6,
+    nome: "Integrado Radeon Vega 7 ",
+    preco: 0,
+    categoria: "Vídeo",
+  },
+];
+app.get('/catalogo/:id', (requisicao, resposta) => {
+  let extraiId = Number(requisicao.params.id);
+  let pecaEncontrada = catalogoDePecas.find(item => item.id === extraiId);
+
+  if(pecaEncontrada){
+    return resposta.json(pecaEncontrada);
+  } else {
+    resposta.status(404).json({erro: "Peça não encontrada" });
+  }
 });
 
-// PASSO 3: Os computadores possuem 65.535 portas de rede lógicas. 
-// Mande o seu servidor escutar o tráfego especificamente na porta 3000.
-// SEU CÓDIGO AQUI: servidor.listen( ... );
-server.listen(3000, () => {
-    console.log("Servidor rodando em http://localhost:3000");
+app.listen(3000, () => {
+    console.log("Servidor rodando em http://localhost:3000"); 
 });
