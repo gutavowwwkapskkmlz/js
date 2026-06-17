@@ -1,45 +1,49 @@
-let catalogoDePecas = [
-  {
-    id: 1,
-    nome: "AMD Ryzen 5 5600G",
-    preco: 800,
-    categoria: "Processador ",
-  },
-  { id: 2, nome: "B550M ", preco: 750, categoria: "Placa-mãe" },
-  {
-    id: 3,
-    nome: "16 GB DDR4 (2x8 GB)",
-    preco: 800,
-    categoria: "Memória RAM",
-  },
-  {
-    id: 4,
-    nome: "500W 80 Plus Bronze ",
-    preco: 700,
-    categoria: "Fonte",
-  },
-  {
-    id: 5,
-    nome: "Mid Tower com boa ventilação ",
-    preco: 450,
-    categoria: "Fonte",
-  },
-  {
-    id: 6,
-    nome: "Integrado Radeon Vega 7 ",
-    preco: 0,
-    categoria: "Vídeo",
-  },
-];
-
+let catalogoDePecas = [];
 let setupDoCliente = JSON.parse(localStorage.getItem('carrinhoSalvo')) || [];
 
-function renderizarVitrine() {
+
+async function carregarCatalogo() {
+  try{
+    const resposta = await fetch("http://localhost:3000/catalogo");
+
+    if(!resposta.ok) { 
+     throw new Error("Peça não encontrada");
+    }
+
+    catalogoDePecas = await resposta.json();
+    console.log(catalogoDePecas)
+
+    renderizarVitrine(catalogoDePecas)
+
+   
+
+  } catch(erro){
+    console.error("erro:", erro)
+  } 
+};
+
+
+
+
+function renderizarVitrine(catalogoDePecas) {
   let vitrine = document.getElementById("vitrine-de-pecas");
-  vitrine.innerHTML = "";
+
+  let htmlAcumulado = "";
+
   catalogoDePecas.forEach((pecaAtual) => {
-    vitrine.innerHTML += `<p class="vitrine-css"> Modelo: ${pecaAtual.categoria}, Nome: ${pecaAtual.nome}, Preço: ${pecaAtual.preco} <button onclick="adicionarAoCarrinho(${pecaAtual.id})">Adicionar</button> </p>`;
+    htmlAcumulado += `
+      <p class="vitrine-css">
+        Modelo: ${pecaAtual.categoria},
+        Nome: ${pecaAtual.nome},
+        Preço: ${pecaAtual.preco}
+        <button onclick="adicionarAoCarrinho(${pecaAtual.id})">
+          Adicionar
+        </button>
+      </p>
+    `;
   });
+
+  vitrine.innerHTML = htmlAcumulado;
 }
 
 function adicionarAoCarrinho(idDaPecaClicada) {
@@ -60,12 +64,15 @@ function adicionarAoCarrinho(idDaPecaClicada) {
   localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
   renderizarCarrinho();
 }
+
+
 function renderizarCarrinho() {
+  let htmlAcumulado = "";
   let carrinho = document.getElementById("carrinho-do-cliente");
   carrinho.innerHTML = "";
 
   setupDoCliente.forEach((peca) => {
-    carrinho.innerHTML += `<p class="vitrine-css">Nome: ${peca.nome}, Preço: ${peca.preco}, quantidade: ${peca.quantidade}   <button onclick="removerDoCarrinho(${peca.id})">excluir</button> </p>`;
+    htmlAcumulado += `<p class="vitrine-css">Nome: ${peca.nome}, Preço: ${peca.preco}, quantidade: ${peca.quantidade}   <button onclick="removerDoCarrinho(${peca.id})">excluir</button> </p>`;
   });
 
   let total = setupDoCliente.reduce((acumulador, peca) => {
@@ -77,7 +84,8 @@ function renderizarCarrinho() {
     currency: "BRL",
   }).format(total);
 
-  carrinho.innerHTML += `<p class="vitrine-css"> Custo Total: ${totalFormatado} </p>`;
+   htmlAcumulado += `<p class="vitrine-css"> Custo Total: ${totalFormatado} </p>`;
+   carrinho.innerHTML = htmlAcumulado;
 }
 function removerDoCarrinho(idDaPeca) {
   let pecaAlvo = setupDoCliente.find((item) => item.id === idDaPeca);
@@ -89,5 +97,6 @@ function removerDoCarrinho(idDaPeca) {
     localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
   renderizarCarrinho(); 
 }
-renderizarVitrine();
+
 renderizarCarrinho();
+carregarCatalogo();
