@@ -99,13 +99,18 @@ function removerDoCarrinho(idDaPeca) {
 }
 
 async function cadastrarNovaPeca(nome, preco, categoria){
-
-novaPeca = {
-preco:"",
-nome:"", 
-categoria:"" 
+let novaPeca = {
+preco: preco,
+nome: nome, 
+categoria: categoria 
 }
-
+ const resposta = await fetch("http://localhost:3000/catalogo", {
+  method: "POST", 
+  headers: {
+    "content-Type": "application/json"
+  },
+  body: JSON.stringify(novaPeca)
+ });
 }
 
 renderizarCarrinho();
