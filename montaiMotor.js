@@ -98,5 +98,15 @@ function removerDoCarrinho(idDaPeca) {
   renderizarCarrinho(); 
 }
 
+async function cadastrarNovaPeca(nome, preco, categoria){
+
+novaPeca = {
+preco:"",
+nome:"", 
+categoria:"" 
+}
+
+}
+
 renderizarCarrinho();
 carregarCatalogo();

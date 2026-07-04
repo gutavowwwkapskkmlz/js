@@ -1,6 +1,6 @@
 //factory fuction 
 
-function criaCoisas(nome, sobrenome){
+function pessoas(nome, sobrenome){
 return {
     nome, 
     sobrenome,
@@ -9,8 +9,8 @@ return {
     }
 };
 }
-const p1 = criaCoisas('doido', 'Fernando');
-console.log(p1.nomeCompleto);
+const pessoa1 = new pessoas('doido', 'Fernando');
+console.log(pessoa1.nomeCompleto);
 
 
 //construtor function
