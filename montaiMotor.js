@@ -1,29 +1,22 @@
 let catalogoDePecas = [];
-let setupDoCliente = JSON.parse(localStorage.getItem('carrinhoSalvo')) || [];
-
+let setupDoCliente = JSON.parse(localStorage.getItem("carrinhoSalvo")) || [];
 
 async function carregarCatalogo() {
-  try{
+  try {
     const resposta = await fetch("http://localhost:3000/catalogo");
 
-    if(!resposta.ok) { 
-     throw new Error("Peça não encontrada");
+    if (!resposta.ok) {
+      throw new Error("Peça não encontrada");
     }
 
     catalogoDePecas = await resposta.json();
-    console.log(catalogoDePecas)
+    console.log(catalogoDePecas);
 
-    renderizarVitrine(catalogoDePecas)
-
-   
-
-  } catch(erro){
-    console.error("erro:", erro)
-  } 
-};
-
-
-
+    renderizarVitrine(catalogoDePecas);
+  } catch (erro) {
+    console.error("erro:", erro);
+  }
+}
 
 function renderizarVitrine(catalogoDePecas) {
   let vitrine = document.getElementById("vitrine-de-pecas");
@@ -42,29 +35,28 @@ function renderizarVitrine(catalogoDePecas) {
       </p>
     `;
   });
-
   vitrine.innerHTML = htmlAcumulado;
 }
 
 function adicionarAoCarrinho(idDaPecaClicada) {
-  
   let pecaEncontrada = catalogoDePecas.find(
     (item) => item.id === idDaPecaClicada,
   );
 
-  let pecaNoCarrinho = setupDoCliente.find((item) => item.id === idDaPecaClicada)
-  if(pecaNoCarrinho) {
-    pecaNoCarrinho.quantidade += 1
-  } else{
-    let copiaDaPeca =  {...pecaEncontrada}
+  let pecaNoCarrinho = setupDoCliente.find(
+    (item) => item.id === idDaPecaClicada,
+  );
+  if (pecaNoCarrinho) {
+    pecaNoCarrinho.quantidade += 1;
+  } else {
+    let copiaDaPeca = { ...pecaEncontrada };
     copiaDaPeca.quantidade = 1;
     setupDoCliente.push(copiaDaPeca);
   }
   console.log(setupDoCliente);
-  localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
+  localStorage.setItem("carrinhoSalvo", JSON.stringify(setupDoCliente));
   renderizarCarrinho();
 }
-
 
 function renderizarCarrinho() {
   let htmlAcumulado = "";
@@ -76,7 +68,7 @@ function renderizarCarrinho() {
   });
 
   let total = setupDoCliente.reduce((acumulador, peca) => {
-    return acumulador + (peca.preco * peca.quantidade);
+    return acumulador + peca.preco * peca.quantidade;
   }, 0);
 
   let totalFormatado = new Intl.NumberFormat("pt-BR", {
@@ -84,34 +76,36 @@ function renderizarCarrinho() {
     currency: "BRL",
   }).format(total);
 
-   htmlAcumulado += `<p class="vitrine-css"> Custo Total: ${totalFormatado} </p>`;
-   carrinho.innerHTML = htmlAcumulado;
+  htmlAcumulado += `<p class="vitrine-css"> Custo Total: ${totalFormatado} </p>`;
+  carrinho.innerHTML = htmlAcumulado;
 }
 function removerDoCarrinho(idDaPeca) {
   let pecaAlvo = setupDoCliente.find((item) => item.id === idDaPeca);
-  if(pecaAlvo.quantidade > 1){
+  if (pecaAlvo.quantidade > 1) {
     pecaAlvo.quantidade -= 1;
-  } else{
-     setupDoCliente = setupDoCliente.filter((peca) => peca.id !== idDaPeca);
+  } else {
+    setupDoCliente = setupDoCliente.filter((peca) => peca.id !== idDaPeca);
   }
-    localStorage.setItem('carrinhoSalvo',JSON.stringify(setupDoCliente));
-  renderizarCarrinho(); 
+  localStorage.setItem("carrinhoSalvo", JSON.stringify(setupDoCliente));
+  renderizarCarrinho();
 }
 
-async function cadastrarNovaPeca(nome, preco, categoria){
-let novaPeca = {
-preco: preco,
-nome: nome, 
-categoria: categoria 
+async function cadastrarNovaPeca(nome, preco, categoria) {
+  let novaPeca = {
+    preco: preco,
+    nome: nome,
+    categoria: categoria,
+  };
+  const resposta = await fetch("http://localhost:3000/catalogo", {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json",
+    },
+    body: JSON.stringify(novaPeca),
+  });
+  const recibo = await resposta.json();
+  console.log("Nova peça homologada pelo servidor:", recibo);
+  carregarCatalogo();
 }
- const resposta = await fetch("http://localhost:3000/catalogo", {
-  method: "POST", 
-  headers: {
-    "content-Type": "application/json"
-  },
-  body: JSON.stringify(novaPeca)
- });
-}
-
 renderizarCarrinho();
-carregarCatalogo();
+cadastrarNovaPeca("Placa de video RTX 4090", 1200, "video");
